@@ -12,8 +12,11 @@ class NoteDatabase extends ChangeNotifier {
     isar = await Isar.open([NoteSchema], directory: dir.path);
   }
 
-  Future<void> addNote(String textFromUser) async {
-    final newNote = Note()..text = textFromUser;
+  Future<void> addNote(String textFromUser, String titleFromUser) async {
+    final newNote = Note();
+    newNote.text = textFromUser;
+    newNote.title = titleFromUser;
+    newNote.lastModified = DateTime.now();
     await isar.writeTxn(() => isar.notes.put(newNote));
     await fetchNotes();
   }
@@ -25,12 +28,14 @@ class NoteDatabase extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateNote(int id, String newText) async
+  Future<void> updateNote(int id, String newText, String newTitle) async
   {
     final existingNote = await isar.notes.get(id);
     if(existingNote != null)
     {
       existingNote.text = newText;
+      existingNote.title = newTitle;
+      existingNote.lastModified = DateTime.now();
       await isar.writeTxn(() => isar.notes.put(existingNote));
       await fetchNotes();
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:offline_database_note_app/models/note_database.dart';
+import 'package:offline_database_note_app/pages/note_creation_page.dart';
 import 'package:offline_database_note_app/pages/note_page.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: NotePage());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: NotePage(),
+      routes: {
+        "/note_creation_page": (context) => const NoteCreationPage(),
+      },
+    );
   }
 }
