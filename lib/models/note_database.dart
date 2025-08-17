@@ -12,11 +12,13 @@ class NoteDatabase extends ChangeNotifier {
     isar = await Isar.open([NoteSchema], directory: dir.path);
   }
 
-  Future<void> addNote(String textFromUser, String titleFromUser) async {
+  Future<void> addNote(String textFromUser, String titleFromUser, bool isFavorite) async {
     final newNote = Note();
     newNote.text = textFromUser;
     newNote.title = titleFromUser;
     newNote.lastModified = DateTime.now();
+    newNote.isFavorite = isFavorite;
+
     await isar.writeTxn(() => isar.notes.put(newNote));
     await fetchNotes();
   }
@@ -28,7 +30,7 @@ class NoteDatabase extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateNote(int id, String newText, String newTitle) async
+  Future<void> updateNote(int id, String newText, String newTitle, bool isFavorite) async
   {
     final existingNote = await isar.notes.get(id);
     if(existingNote != null)
@@ -36,6 +38,7 @@ class NoteDatabase extends ChangeNotifier {
       existingNote.text = newText;
       existingNote.title = newTitle;
       existingNote.lastModified = DateTime.now();
+      existingNote.isFavorite = isFavorite;
       await isar.writeTxn(() => isar.notes.put(existingNote));
       await fetchNotes();
     }
@@ -44,6 +47,17 @@ class NoteDatabase extends ChangeNotifier {
   Future<void> deleteNote(int id) async
   {
     await isar.writeTxn(() => isar.notes.delete(id));
+    await fetchNotes();
+  }
+
+  Future<void> updateFavoriteStatus(int id, bool isFavorite) async {
+    await isar.writeTxn(() async {
+      final existingNote = await isar.notes.get(id);
+      if (existingNote != null) {
+        existingNote.isFavorite = isFavorite;
+        await isar.notes.put(existingNote);
+      }
+    });
     await fetchNotes();
   }
 }

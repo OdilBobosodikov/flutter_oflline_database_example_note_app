@@ -8,4 +8,5 @@ class Note {
   late String? text;
   late String? title;
   late DateTime lastModified;
+  late bool isFavorite;
 }

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: NotePage(),
       routes: {
-        "/note_creation_page": (context) => const NoteCreationPage(),
+        "/note_creation_page": (context) => NoteCreationPage(),
       },
     );
   }
